@@ -2,19 +2,10 @@ from flask import Flask, jsonify, render_template, request
 from wakeonlan import send_magic_packet
 from ping3 import ping
 from configparser import ConfigParser
+import paramiko
 
 app = Flask(__name__)
 config = ConfigParser()
-
-# helper function
-
-
-def reverse_mac(mac):
-    """Reverses a MAC address and formats it with hyphens between each pair of characters."""
-    mac = mac.replace(':', '').replace('-', '')
-    mac_pairs = [mac[i:i+2] for i in range(0, len(mac), 2)]
-    reversed_mac = '-'.join(reversed(mac_pairs))
-    return reversed_mac.upper()
 
 # Index route
 
@@ -67,11 +58,12 @@ def wol(mac):
         return jsonify({'result': False, 'error': str(e)})
 
 
-@app.route('/api/sol/<mac>', methods=['GET'])
+@app.route('/api/off', methods=['GET'])
 def sol(mac):
     try:
-        cam = reverse_mac(mac)
-        send_magic_packet(cam)
+        ssh = paramiko.SSHClient()
+        ssh.connect(192.168.1.107, username=media, password=media1)
+        ssh_stdin, ssh_stdout, ssh_stderr = ssh.exec_command(sudo shutdown now)
         return jsonify({'result': True})
     except Exception as e:
         return jsonify({'result': False, 'error': str(e)})
@@ -92,4 +84,4 @@ def state(ip):
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=9008)
+    app.run(host='0.0.0.0', port=80)
