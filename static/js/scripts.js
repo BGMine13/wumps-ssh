@@ -71,7 +71,7 @@ function init() {
         sendPacket('wol', 'Wake packet sent.')
     );
     sleepButton.addEventListener('click', () =>
-        sendPacket('sol', 'Sleep packet sent.')
+        sendPacket('off', 'Sleep packet sent.')
     );
 
     toggleFormBtn.addEventListener('click', () => {
